@@ -7,6 +7,7 @@ S3 	-> 	C Lab
 S7 	-> 	Computer Hardware Interfacing Lab
 		Network & Operating Systems Lab
 
+S4	->	Data Structures Lab
 
 
 
