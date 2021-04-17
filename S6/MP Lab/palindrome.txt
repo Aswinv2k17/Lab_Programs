@@ -1,0 +1,95 @@
+//PALINDROME
+
+DISP    MACRO   MSG
+MOV     AH,09H
+LEA     DX,MSG
+INT     21H
+ENDM
+
+
+DATA    SEGMENT
+
+MSG1    DB      0ah,0dh,"Enter the string for checking $"
+MSG2    DB      0ah,0dh,"Reverse of the string $"
+MSG3    DB      0ah,0dh,"The given string is a palindrome $"
+MSG4    DB      0ah,0dh,"The given string is not a palindrome $"
+INS     DB      40      DUP(0)
+RES     DB      40      DUP(0)
+
+DATA    ENDS
+
+CODE    SEGMENT
+ASSUME  CS:CODE,DS:DATA
+START:
+        MOV     AX,DATA
+        MOV     DS,AX
+
+        LEA     SI,INS
+        LEA     DI,RES
+
+        DISP    MSG1
+
+        MOV     CX,0000H
+
+RDCHAR: MOV     AH,01H
+        INT     21H
+        CMP     AL,0DH
+        JE      AHEAD
+        MOV     [SI],AL
+        INC     SI
+        INC     CX
+        JMP     RDCHAR
+
+AHEAD:  MOV     BX,CX
+
+REVERSE:
+        DEC     SI
+        MOV     AL,[SI]
+        MOV     [DI],AL
+        INC     DI
+        LOOP    REVERSE
+        MOV     AL,'$'
+        MOV     [DI],AL
+
+       DISP     MSG2
+       DISP     RES
+
+LEA     SI,INS
+LEA     DI,RES
+MOV     CX,BX
+
+CHECK:
+        MOV     AL,[SI]
+        CMP     AL,[DI]
+        JNE     FALSE
+        INC     SI
+        INC     DI
+        LOOP    CHECK
+        DISP    MSG3
+        JMP     EXIT
+
+FALSE:  DISP    MSG4
+
+EXIT:
+        MOV     AH,4CH
+        MOV     AL,00H
+        INT     21H
+
+CODE    ENDS
+END     START
+
+
+
+OUTPUT
+--------------
+
+C:\MASM>palin
+
+Enter the string for checking MADAM
+Reverse of the string MADAM
+The given string is a palindrome
+C:\MASM>palin
+
+Enter the string for checking STUDENTS
+Reverse of the string STNEDUTS
+The given string is not a palindrome

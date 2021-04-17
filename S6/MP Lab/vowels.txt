@@ -1,0 +1,55 @@
+//COUNTING VOWELS
+
+DATA    SEGMENT
+VOWELS  DB      'aeiouAEIOU$'
+VALUE   DB      'Enter the string $'
+RESULT  DB      0DH,0AH,'No of vowels $'
+PRINT   MACRO   MSG
+MOV     DX,OFFSET MSG
+MOV     AH,09H
+INT     21H
+ENDM
+DATA    ENDS
+
+CODE    SEGMENT
+ASSUME  CS:CODE,DS:DATA
+START:  MOV AX,DATA
+        MOV DS,AX
+        PRINT VALUE
+        MOV BH,0DH
+        MOV BL,00H
+
+L2:     MOV SI,OFFSET VOWELS
+        SUB SI,01H
+        MOV CL,0AH
+        MOV AH,01H
+        INT 21H
+        CMP AL,BH
+        JZ L1
+
+L4:     INC SI
+        CMP AL,[SI]
+        JZ L3
+        LOOP L4
+        JMP L2
+
+L3:     INC BL
+        JMP L2
+
+L1:     PRINT RESULT
+        ADD BL,30H
+        MOV DL,BL
+        MOV AH,02H
+        INT 21H
+        MOV AH,4CH
+        INT 21H
+
+CODE    ENDS
+END     START
+
+OUTPUT
+--------------
+
+C:\MASM>VOWELS
+Enter the string MISUNDERSTAND
+No of vowels 4

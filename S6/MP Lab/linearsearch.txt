@@ -1,0 +1,147 @@
+//LINEAR SEARCH
+
+DATA    SEGMENT
+NUM     DB      20      DUP(0)
+NUM1    DW      0
+NUM2    DW      0
+POS     DB      0
+
+MSG1    DB      0ah,0dh,"Enter the number of elements in the array $"
+MSG2    DB      0ah,0dh,"Enter the elements in the array $"
+MSG3    DB      0ah,0dh,"The entered array is $"
+MSG4    DB      0ah,0dh,"Enter the element to search $"
+MSG5    DB      0ah,0dh,"Element is present $"
+MSG6    DB      0ah,0dh,"Element is not present $"
+
+DATA    ENDS
+
+CODE    SEGMENT
+ASSUME  CS:CODE,DS:DATA
+START:
+MOV     AX,DATA
+MOV     DS,AX
+
+LEA     DX,MSG1
+MOV     AH,09H
+INT     21H
+
+CALL    INPUT
+MOV     NUM1,AX
+
+LEA     DX,MSG2
+MOV     AH,09H
+INT     21H
+
+MOV     CX,NUM1
+LEA     SI,NUM
+MOV     DI,SI
+
+LOOP1:CALL INPUT
+      MOV[SI],AX
+      INC SI
+      INC SI
+      LOOP LOOP1
+
+LEA   DX,MSG3
+MOV   AH,09H
+INT   21H
+
+MOV   DX,0000H
+MOV   AX,0000H
+MOV   CX,NUM1
+MOV   SI,DI
+
+LOOP2:MOV AX,[SI]
+      INC SI
+      INC SI
+      CALL OUTPUT
+      LOOP LOOP2
+
+LEA   DX,MSG4
+MOV   AH,09H
+INT   21H
+
+
+CALL  INPUT
+
+MOV   NUM2,AX
+
+LEA   SI,NUM
+MOV   CX,NUM1
+MOV   DX,NUM2
+MOV   AX,[SI]
+DEC   CX
+AGAIN:CMP AX,DX
+      JZ AVAIL
+      INC SI
+      DEC CX
+      MOV AX,[SI]
+      LOOP AGAIN
+
+NOTAVAIL:LEA DX,MSG6
+         MOV AH,09H
+         INT 21H
+         JMP OVER
+
+AVAIL:LEA DX,MSG5
+      MOV AH,09H
+      INT 21H
+
+OVER:MOV AH,4CH
+     INT 21H
+
+INPUT   PROC NEAR
+        MOV BP,0000H
+        REPEAT:MOV AH,01H
+               INT 21H
+
+               MOV AH,00H
+               CMP AL,' '
+               JE STORE
+               SUB AX,30H
+               MOV BX,AX
+               MOV AX,000AH
+               MUL BP
+               ADD AX,BX
+               MOV BP,AX
+               JMP REPEAT
+
+STORE:MOV AX,BP
+      RET
+INPUT ENDP
+
+OUTPUT  PROC NEAR
+        MOV BP,0000H
+        RPT:MOV BX,000AH
+            MOV DX,0000H
+            DIV BX
+            PUSH DX
+            INC BP
+            CMP AX,0000H
+            JNE RPT
+
+        RPT2:POP AX
+             ADD AX,30H
+             MOV DX,AX
+             MOV AH,02H
+             INT 21H
+             DEC BP
+             CMP BP,0000H
+             JNE RPT2
+
+             RET
+         OUTPUT ENDP
+         CODE   ENDS
+         END    START
+
+
+OUTPUT
+-------------
+
+C:\MASM>linrsrch
+
+Enter the number of elements in the array 6
+Enter the elements in the array 5 4 1 2 3 6
+The entered array is 541236
+Enter the element to search 1
+Element is present

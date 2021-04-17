@@ -1,0 +1,104 @@
+//FACTORIAL
+
+
+DATA    SEGMENT
+msg1    db      0ah,0dh,"Enter the number to find factorial $"
+msg2    db      0ah,0dh,"Factorial is $"
+factl   dw      0
+factu   dw      0
+DATA    ENDS
+
+CODE    SEGMENT
+assume  cs:code,ds:data
+start:
+mov     ax,data
+mov     ds,ax
+
+lea     dx,msg1
+mov     ah,09h
+int     21h
+
+call    input
+
+mov     bp,0000h
+cmp     ax,0001h
+jng     store
+
+mov     cx,ax
+mov     bx,cx
+dec     cx
+
+repeat: dec   bx
+        cmp   bx,0001h
+        je    store
+        mul   bx
+        push  ax
+        push  dx
+        mov   ax,bp
+        mul   bx
+        pop   dx
+        add   ax,dx
+        mov   bp,ax
+        pop   ax
+        jmp   repeat
+
+store:  mov   factl,ax
+        mov   factu,bp
+
+mov     ax,factu
+call    output
+mov     ax,factl
+call    output
+mov     ah,4ch
+int     21h
+
+input   proc  near
+mov     bx,0000h
+repeat1:mov   ah,01h
+        int   21h
+        mov   ah,00h
+        cmp   al,' '
+        je    store1
+        sub   al,30h
+        mov   bp,ax
+        mov   ax,000ah
+        mul   bx
+        add   bx,bp
+        jmp   repeat1
+
+store1: mov   ax,bx
+        ret
+
+input   endp
+
+output  proc near
+mov     bp,0000h
+orpt:   mov   bx,000ah
+        mov   dx,0000h
+        div   bx
+        push  dx
+        inc   bp
+        cmp   ax,0000h
+        jne   orpt
+
+rpt2:   pop   ax
+        add   ax,30h
+        mov   dx,ax
+        mov   ah,02h
+        int   21h
+        dec   bp
+        cmp   bp,0000h
+        jne   rpt2
+        ret
+
+output  endp
+CODE    ENDS
+END     START
+
+
+OUTPUT
+----------------------
+
+C:\MASM>facts
+
+Enter the number to find factorial 7 05040

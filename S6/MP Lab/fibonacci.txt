@@ -1,0 +1,112 @@
+//FIBONACCI
+
+
+DATA    SEGMENT
+msg1    db      0ah,0dh,"Enter the limit: $"
+msg2    db      0ah,0dh,"Fibonacci Series: $"
+n       dw      0
+res     db      100 dup("?")
+enter   db      0ah,0dh,'$'
+space   db      ' $'
+display macro   arg
+lea     dx,arg
+mov     ah,09h
+int     21h
+endm
+DATA    ENDS
+
+CODE    SEGMENT
+assume  cs:code,ds:data
+start:
+        mov     ax,data
+        mov     ds,ax
+        display msg1
+        lea     si,n
+        call    read
+        display msg2
+        display space
+mov     cx,n
+mov     al,00h
+mov     bl,01h
+lea     si,res
+
+next:
+        mov     [si],al
+        add     al,bl
+        xchg    al,bl
+        inc     si
+        loop    next
+        lea     si,res
+l1:
+        call    printnum
+        display space
+        inc     si
+        mov     al,[si]
+        cmp     al,'?'
+        jne     l1
+        mov     ah,4ch
+        int     21h
+read proc
+        mov     bx,[si]
+        mov     cl,0ah
+loop1:
+        mov     ah,01h
+        int     21h
+        cmp     al,0dh
+        je      endproc
+        cmp     al,' '
+        je      endproc1
+        sub     al,30h
+        mov     ch,al
+        mov     ax,bx
+        mul     cl
+        add     al,ch
+        adc     ah,00h
+        mov     bx,ax
+        jmp     loop1
+endproc:display enter
+endproc1:mov[si],bx
+        ret
+read    endp
+
+printnum proc
+        mov     ax,[si]
+        mov     ah,00h
+        mov     cx,00h
+
+loop2:        mov     bx,0ah
+        mov     dx,00h
+        cmp     ax,bx
+jl over
+        div     bx
+        add     dx,30h
+        push    dx
+        inc     cx
+        cmp     ax,00h
+        jne     loop2
+over:
+        mov     dx,ax
+        add     dx,30h
+        push    dx
+        inc     cx
+mov     ah,02h
+loop3:  pop     dx
+        int     21h
+        loop    loop3
+        ret
+        printnum endp
+
+CODE    ENDS
+END     START
+
+
+
+OUTPUT
+---------------------
+
+C:\MASM>fibo
+
+Enter the limit: 7
+
+Fibonacci Series:  0 1 1 2 3 5 8
+C:\MASM>facts

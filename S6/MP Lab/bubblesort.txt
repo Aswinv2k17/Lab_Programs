@@ -1,0 +1,153 @@
+//BUBBLE SORT
+
+
+DATA    SEGMENT
+
+MSG1    DB      0ah,0dh,"Enter the size of array $"
+MSG2    DB      0ah,0dh,"Enter the elements in the array $"
+MSG3    DB      0ah,0dh,"The sorted array is $"
+MSG4    DB      0ah,0dh,"Output:  $"
+
+A       DW      100      DUP(?)
+N       DW      0
+T       DW      ?
+TL      DW      ?
+ENTER   DB      0dh,0ah,'$'
+SPACE   DB      '$'
+
+PRINT   MACRO   ARG
+        LEA     DX,ARG
+        MOV     AH,09H
+        INT     21H
+ENDM
+DATA    ENDS
+
+
+CODE    SEGMENT
+
+ASSUME  CS:CODE,DS:DATA
+START:
+        MOV     AX,DATA
+        MOV     DS,AX
+        PRINT   MSG4
+        PRINT   MSG1
+        LEA     SI,N
+        CALL    READNUM
+        PRINT   MSG2
+        LEA     SI,A
+        MOV     CX,N
+
+ML:
+        MOV     TL,CX
+        CALL    READNUM
+        MOV     CX,TL
+        ADD     SI,02H
+        LOOP    ML
+        MOV     DX,N
+        DEC     DX
+
+LP0:
+        MOV     CX,DX
+        LEA     SI,A
+
+LP1:
+        MOV     AX,[SI]
+        CMP     AX,[SI+02]
+        JL      CONT
+        XCHG    [SI+02],AX
+        XCHG    [SI],AX
+
+CONT:
+        ADD     SI,02H
+        LOOP    LP1
+        DEC     DX
+        JNZ     LP0
+        PRINT   MSG3
+        LEA     SI,A
+        MOV     CX,N
+
+M2:
+        MOV     TL,CX
+        CALL    PRINTNUM
+        PRINT   SPACE
+        MOV     CX,TL
+        ADD     SI,02H
+        LOOP    M2
+        MOV     AH,4CH
+        INT     21H
+
+READNUM PROC
+        MOV     BX,[SI]
+        MOV     CL,0AH
+
+RL1:
+        MOV     AH,01H
+        INT     21H
+        CMP     AL,0DH
+        JE      ENDPR
+        CMP     AL,' '
+        JE      ENDPR1
+        SUB     AL,30H
+        MOV     CH,AL
+        MOV     AX,BX
+        MUL     CL
+        ADD     AL,CH
+        ADC     AH,00H
+        MOV     BX,AX
+        JMP     RL1
+
+ENDPR:
+        PRINT   ENTER
+
+ENDPR1:
+        MOV     [SI],BX
+        RET
+
+READNUM ENDP
+
+PRINTNUM PROC
+        MOV     AX,[SI]
+        MOV     AH,00H
+        MOV     BL,0AH
+        MOV     CX,00H
+        MOV     DX,00H
+
+L2:
+        CMP     AX,BX
+        JL      OVRFLW
+        DIV     BX
+        ADD     DX,30H
+        PUSH    DX
+        MOV     DX,00H
+        INC     CX
+        CMP     AL,00H
+        JNE     L2
+
+OVRFLW:
+        MOV     DX,AX
+        ADD     DX,30H
+        PUSH    DX
+        INC     CX
+        MOV     AH,02H
+
+L3:
+        POP     DX
+        INT     21H
+        LOOP    L3
+        RET
+        PRINTNUM        ENDP
+
+CODE ENDS
+END START
+
+
+
+OUTPUT
+--------------
+
+
+Output:
+Enter the size of array 7
+
+Enter the elements in the array 9 8 1 7 2 4 5
+The sorted array is 1245789

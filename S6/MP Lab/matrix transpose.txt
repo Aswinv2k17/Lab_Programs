@@ -1,0 +1,107 @@
+//matrix_transpose
+
+
+data segment
+msg1 db 0ah,0dh,'Enter elements of matrix:  $'
+msg2 db  0ah,0dh,'transpose is: $'
+m db 100 dup('?')
+enter db 0ah,0dh,'$'
+num db ?
+data ends
+
+show macro arg
+mov dx,offset arg
+mov ah,09h
+int 21h
+endm
+
+shownum macro 
+mov dl,al
+add dx,30h
+mov ah,02h
+int 21h
+endm
+
+read macro
+mov ah,01h
+int 21h
+sub al,30h
+endm
+
+code segment
+assume cs:code,ds:data
+start:
+mov ax,data
+mov ds,ax
+
+show msg1
+lea si,m
+mov cl,11h
+
+l1:
+read
+mov [si],al
+show enter
+inc si
+dec cl
+cmp cl,00h
+jz l2
+jmp l1
+
+
+l2:
+mov cl,11h
+show msg2
+show enter
+mov si,00
+mov al,m[si]
+shownum
+add si,06h
+mov al,m[si]
+shownum
+add si,06h
+mov al,m[si]
+shownum
+
+
+mov si,00
+add si,02h
+mov al,m[si]
+shownum
+add si,06h
+mov al,m[si]
+shownum
+add si,06h
+mov al,m[si]
+shownum
+
+mov si,0h
+add si,04h
+mov al,m[si]
+shownum
+add si,06h
+mov al,m[si]
+shownum
+add si,06h
+mov al,m[si]
+shownum
+
+
+mov ah,4ch
+int 21h
+code ends
+end start
+
+output:
+Enter elements of matrix:  1
+2
+3
+4
+5
+6
+7
+8
+9
+transpose is:
+147258369
+C:\MASM>

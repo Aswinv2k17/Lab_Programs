@@ -1,0 +1,28 @@
+//DISPLAY
+
+
+DATA    SEGMENT
+msg1    DB      "hello$"
+DATA    ENDS
+
+CODE    SEGMENT
+ASSUME  cs:code,ds:data
+START:
+MOV     ax,data
+MOV     ds,ax
+LEA     dx,msg1
+MOV     ah,09h
+INT     21h
+MOV     ah,4ch
+INT     21h
+CODE    ENDS
+END     START
+
+
+
+
+OUTPUT
+------------------
+
+C:\MASM>display
+hello

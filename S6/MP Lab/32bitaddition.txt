@@ -1,0 +1,80 @@
+//32-BIT ADDITION
+
+
+DATA    SEGMENT
+NUM1    DB      8       DUP(0)
+NUM2    DB      8       DUP(0)
+SUM     DB      8       DUP(0)
+MSG1    DB      0ah,0dh,"Enter the first number $"
+MSG2    DB      0ah,0dh,"Enter the second number $"
+MSG3    DB      0ah,0dh,"Sum is $"
+DATA    ENDS
+
+CODE    SEGMENT
+ASSUME  CS:CODE,DS:DATA
+START:
+MOV     AX,DATA
+MOV     DS,AX
+
+LEA     DX,MSG1
+MOV     AH,09H
+INT     21H
+
+MOV     CX,08H
+MOV     SI,07H
+
+L1:MOV  AH,01H
+   INT  21H
+   AND  AL,0FH
+   MOV  NUM1[SI],AL
+   DEC  SI
+   LOOP L1
+
+LEA     DX,MSG2
+MOV     AH,09H
+INT     21H
+
+MOV     CX,08H
+MOV     SI,07H
+
+L2:MOV     AH,01H
+   INT     21H
+   AND     AL,0FH
+   MOV     NUM2[SI],AL
+   DEC     SI
+   LOOP    L2
+
+MOV     CX,08H
+MOV     SI,0000H
+
+LP1:    MOV  AL,NUM1[SI]
+ADD     AL,NUM2[SI]
+CMP     AL,0AH
+JB      DOWN
+ADD     AL,37H
+MOV     SUM[SI],AL
+ADD     SI,01H
+LOOP    LP1
+DOWN:   ADD     AL,30H
+        MOV     SUM[SI],AL
+        ADD     SI,01H
+        LOOP    LP1
+       
+LEA     DX,MSG3
+MOV     AH,09H
+INT     21H
+MOV     CX,08H
+MOV     SI,07H
+
+LP2:MOV     DL,SUM[SI]
+    MOV     AH,02H
+    INT     21H
+    DEC     SI
+    LOOP    LP2
+
+MOV     AH,4CH
+INT     21H
+
+CODE    ENDS
+END     START
+
