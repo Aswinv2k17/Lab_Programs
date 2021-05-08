@@ -14,6 +14,6 @@ S6 	-> 	Microprocessor Lab
 S7 	-> 	Computer Hardware Interfacing Lab
 		Network & Operating Systems Lab
 
-
+S8	->	AAD Lab
 
 Credits : Ajold Martin Jose & Sreeraj Babu
